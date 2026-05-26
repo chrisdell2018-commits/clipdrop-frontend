@@ -4,19 +4,8 @@ import { LoginPage } from "./pages/LoginPage";
 import { ConnectionsPage } from "./pages/ConnectionsPage";
 import { OAuthCallback } from "./pages/OAuthCallback";
 
-function useRoute() {
-  const [route, setRoute] = useState(window.location.hash || "#/connections");
-  useEffect(() => {
-    const handler = () => setRoute(window.location.hash || "#/connections");
-    window.addEventListener("hashchange", handler);
-    return () => window.removeEventListener("hashchange", handler);
-  }, []);
-  return route;
-}
-
 export default function App() {
   const { user, loading, logout } = useAuth();
-  const route = useRoute();
 
   if (loading) {
     return (
@@ -26,12 +15,12 @@ export default function App() {
     );
   }
 
-  if (route.startsWith("#/oauth/callback") || window.location.pathname.includes("/oauth/callback")) {
+  if (window.location.pathname.includes("/oauth/callback")) {
     return <OAuthCallback />;
   }
 
   if (!user) {
-    return <LoginPage onLogin={() => { window.location.hash = "#/connections"; }} />;
+    return <LoginPage onLogin={() => window.location.reload()} />;
   }
 
   return (
@@ -56,7 +45,7 @@ export default function App() {
         <div style={{ flex: 1 }} />
         <div style={{ fontSize: 13, color: "#555" }}>{user.email}</div>
         <button
-          onClick={() => { logout(); window.location.hash = "#/"; }}
+          onClick={() => { logout(); window.location.reload(); }}
           style={{
             background: "transparent", border: "1px solid #2a2a3a",
             borderRadius: 8, color: "#666", fontSize: 12,
@@ -69,7 +58,7 @@ export default function App() {
         </button>
       </div>
       <div style={{ paddingTop: 52 }}>
-        {(route.startsWith("#/connections") || route === "#/") && <ConnectionsPage />}
+        <ConnectionsPage />
       </div>
     </div>
   );
