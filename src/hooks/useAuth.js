@@ -18,6 +18,8 @@ export function useAuth() {
     const data = await authApi.login(email, password);
     localStorage.setItem("clipdrop_token", data.token);
     setUser(data.user);
+    // Force redirect immediately
+    window.location.replace("/#/connections");
     return data.user;
   }, []);
 
@@ -25,12 +27,15 @@ export function useAuth() {
     const data = await authApi.register(email, password, name);
     localStorage.setItem("clipdrop_token", data.token);
     setUser(data.user);
+    // Force redirect immediately
+    window.location.replace("/#/connections");
     return data.user;
   }, []);
 
   const logout = useCallback(() => {
     localStorage.removeItem("clipdrop_token");
     setUser(null);
+    window.location.replace("/");
   }, []);
 
   return { user, loading, login, register, logout };
