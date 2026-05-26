@@ -15,10 +15,24 @@ export function LoginPage({ onLogin }) {
     setLoading(true);
     setError(null);
     try {
-      const user = mode === "login"
-        ? await login(email, password)
-        : await register(email, password, name);
-      onLogin(user);
+      const handleSubmit = async () => {
+  if (!email || !password) return;
+  setLoading(true);
+  setError(null);
+  try {
+    const user = mode === "login"
+      ? await login(email, password)
+      : await register(email, password, name);
+    onLogin(user);
+    // Force a full page reload to trigger the redirect
+    window.location.href = "/#/connections";
+    window.location.reload();
+  } catch (err) {
+    setError(err.message);
+  } finally {
+    setLoading(false);
+  }
+};;
     } catch (err) {
       setError(err.message);
     } finally {
