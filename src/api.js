@@ -2,7 +2,7 @@
 // All calls to the backend go through here.
 // Token is read from localStorage and attached automatically.
 
-const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3001";
+const BASE_URL = "https://clipdrop-backend-production.up.railway.app";
 
 class ApiError extends Error {
   constructor(message, status) {
