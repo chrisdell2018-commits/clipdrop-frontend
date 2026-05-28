@@ -3,21 +3,39 @@ import { useAuth } from "./hooks/useAuth";
 import { LoginPage } from "./pages/LoginPage";
 import { ConnectionsPage } from "./pages/ConnectionsPage";
 import { OAuthCallback } from "./pages/OAuthCallback";
+import { PrivacyPage } from "./pages/PrivacyPage";
+import { TermsPage } from "./pages/TermsPage";
+
+function getRoute() {
+  const hash = window.location.hash;
+  const path = window.location.pathname;
+  if (path.includes("/oauth/callback")) return "oauth";
+  if (hash.startsWith("#/privacy") || path.includes("/privacy")) return "privacy";
+  if (hash.startsWith("#/terms") || path.includes("/terms")) return "terms";
+  return "connections";
+}
 
 export default function App() {
   const { user, loading, logout } = useAuth();
+  const [route, setRoute] = useState(getRoute());
+
+  useEffect(() => {
+    const handler = () => setRoute(getRoute());
+    window.addEventListener("hashchange", handler);
+    return () => window.removeEventListener("hashchange", handler);
+  }, []);
 
   if (loading) {
     return (
       <div style={{ minHeight: "100vh", background: "#080810", display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <div style={{ color: "#444", fontSize: 13, fontFamily: "monospace" }}>Loading...</div>
+        <div style={{ color: "#444", fontSize: 13 }}>Loading...</div>
       </div>
     );
   }
 
-  if (window.location.pathname.includes("/oauth/callback")) {
-    return <OAuthCallback />;
-  }
+  if (route === "oauth") return <OAuthCallback />;
+  if (route === "privacy") return <PrivacyPage />;
+  if (route === "terms") return <TermsPage />;
 
   if (!user) {
     return <LoginPage onLogin={() => window.location.reload()} />;
@@ -35,11 +53,13 @@ export default function App() {
         padding: "0 24px", gap: 12,
       }}>
         <div style={{
-          fontFamily: "'Syne', sans-serif",
-          fontWeight: 800, fontSize: 17,
+          fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: 17,
           background: "linear-gradient(135deg, #a78bfa, #f472b6)",
           WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
-        }}>
+          cursor: "pointer",
+        }}
+          onClick={() => { window.location.hash = "#/connections"; }}
+        >
           ClipDrop
         </div>
         <div style={{ flex: 1 }} />
@@ -57,8 +77,24 @@ export default function App() {
           Sign out
         </button>
       </div>
+
       <div style={{ paddingTop: 52 }}>
         <ConnectionsPage />
+      </div>
+
+      <div style={{
+        borderTop: "1px solid #0d0d18", padding: "20px 24px",
+        display: "flex", justifyContent: "center", gap: 24,
+      }}>
+        <a href="/#/privacy" style={{ fontSize: 12, color: "#333", textDecoration: "none" }}
+          onMouseOver={e => e.target.style.color = "#a78bfa"}
+          onMouseOut={e => e.target.style.color = "#333"}
+        >Privacy Policy</a>
+        <a href="/#/terms" style={{ fontSize: 12, color: "#333", textDecoration: "none" }}
+          onMouseOver={e => e.target.style.color = "#a78bfa"}
+          onMouseOut={e => e.target.style.color = "#333"}
+        >Terms of Service</a>
+        <span style={{ fontSize: 12, color: "#222" }}>© 2026 ClipDrop</span>
       </div>
     </div>
   );
