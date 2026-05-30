@@ -5,6 +5,7 @@ import { ConnectionsPage } from "./pages/ConnectionsPage";
 import { OAuthCallback } from "./pages/OAuthCallback";
 import { PrivacyPage } from "./pages/PrivacyPage";
 import { TermsPage } from "./pages/TermsPage";
+import { DataDeletionPage } from "./pages/DataDeletionPage";
 
 function getRoute() {
   const hash = window.location.hash;
@@ -13,6 +14,7 @@ function getRoute() {
   if (hash.startsWith("#/privacy") || path.includes("/privacy")) return "privacy";
   if (hash.startsWith("#/terms") || path.includes("/terms")) return "terms";
   return "connections";
+  if (hash.startsWith("#/data-deletion") || path.includes("/data-deletion")) return "data-deletion";
 }
 
 export default function App() {
@@ -36,6 +38,7 @@ export default function App() {
   if (route === "oauth") return <OAuthCallback />;
   if (route === "privacy") return <PrivacyPage />;
   if (route === "terms") return <TermsPage />;
+  if (route === "data-deletion") return <DataDeletionPage />;
 
   if (!user) {
     return <LoginPage onLogin={() => window.location.reload()} />;
